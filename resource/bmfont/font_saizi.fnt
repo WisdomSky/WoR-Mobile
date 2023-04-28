@@ -1,0 +1,16 @@
+{"file":"font_saizi.png","frames":{
+"1":{"x":0,"y":84,"w":50,"h":83,"offX":8,"offY":4,"sourceW":63,"sourceH":91},
+"2":{"x":120,"y":0,"w":54,"h":83,"offX":4,"offY":4,"sourceW":63,"sourceH":91},
+"3":{"x":176,"y":0,"w":51,"h":84,"offX":6,"offY":4,"sourceW":63,"sourceH":91},
+"4":{"x":0,"y":0,"w":61,"h":82,"offX":0,"offY":5,"sourceW":63,"sourceH":91},
+"5":{"x":120,"y":85,"w":49,"h":83,"offX":8,"offY":5,"sourceW":63,"sourceH":91},
+"6":{"x":63,"y":0,"w":55,"h":84,"offX":5,"offY":4,"sourceW":63,"sourceH":91},
+"f":{"x":52,"y":86,"w":48,"h":74,"offX":4,"offY":1,"sourceW":56,"sourceH":76},
+"b":{"x":171,"y":161,"w":48,"h":73,"offX":4,"offY":2,"sourceW":56,"sourceH":76},
+"c":{"x":0,"y":222,"w":50,"h":51,"offX":3,"offY":24,"sourceW":56,"sourceH":76},
+"k":{"x":171,"y":86,"w":48,"h":73,"offX":4,"offY":2,"sourceW":56,"sourceH":76},
+"o":{"x":0,"y":169,"w":50,"h":51,"offX":3,"offY":24,"sourceW":56,"sourceH":76},
+"w":{"x":101,"y":170,"w":55,"h":50,"offX":0,"offY":25,"sourceW":56,"sourceH":76},
+"r":{"x":151,"y":236,"w":36,"h":51,"offX":10,"offY":24,"sourceW":56,"sourceH":76},
+"d":{"x":52,"y":162,"w":47,"h":73,"offX":4,"offY":2,"sourceW":56,"sourceH":76},
+"a":{"x":101,"y":222,"w":48,"h":51,"offX":4,"offY":24,"sourceW":56,"sourceH":76}}}

@@ -1,0 +1,1 @@
+{"res": {"standby_05_0000": {"y": 1, "x": 1, "w": 78, "h": 178}}, "mc": {"npc005": {"frames": [{"y": -167, "res": "standby_05_0000", "x": -46}], "labels": [{"frame": 1, "end": 1, "name": "stand-to"}], "frameRate": "8", "events": []}}}

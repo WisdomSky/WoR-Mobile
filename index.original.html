@@ -1,0 +1,352 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="full-screen" content="true" />
+    <meta name="screen-orientation" content="portrait" />
+    <meta name="x5-fullscreen" content="true" />
+    <meta name="360-fullscreen" content="true" />
+    <style>
+        html, body {
+            -ms-touch-action: none;
+            background: #000000;
+            padding: 0;
+            border: 0;
+            margin: 0;
+            height: 100%;
+        }
+    </style>
+</head>
+
+<body>
+<div id="canvas_container" style="margin: auto;width: 100%;height: 100%;" class="egret-player"
+     data-entry-class="Main"
+     data-orientation="auto"
+     data-scale-mode="fixedWidth"
+     data-frame-rate="30"
+     data-content-width="720"
+     data-content-height="1280"
+     data-multi-fingered="1"
+     data-show-fps="false"
+     data-show-log="false"
+     data-show-fps-style="x:0,y:0,size:12,textColor:0xffffff,bgAlpha:0.9">
+</div>
+<script>
+    window.RUNTIME = 'native';
+	window.HTTP = "http:";
+	window.SHOW_INIT = true;
+	window.CFG_FILE = "cfg_app.zz";
+	window.IOS_CFG_FILE = "cfg_app.zz";
+	window.LOGFILE = 'log_app_en.json';
+	window.IOS_LOGFILE = "log_app_en.json";
+	window.CONTACTUS = ""; //联系方式
+	window.SERVER_TYPE = 2;
+	window.HAS_CDK = false;
+    window.IS_NOPAY = true;
+    window.IS_IOS_AUDIT = true;
+    window.D_ACCOUNT = true;
+	window.SHOW_LOGIN_WAITING = false
+	window.HAS_HELP = true;
+
+	var _apiUrl = "https://wormb-s1.r2games.com/api/wing/";
+
+	window.RESTART = false;
+    window.S_ACCOUNT = true;
+
+	var APP_ID = 120;
+	var _isSdkInit = false;
+	var _reportData = null;
+	var _loginCb = null;
+	var _loginThis = null;
+	var _cidCb = null;
+	var _cidThis = null;
+	function PfHttpRequest(url, data, cb) {
+        var xhr = new XMLHttpRequest();
+        url += "?time=" + new Date().getTime();
+        for (var key in data) {
+            url += "&" + key + "=" + data[key]
+        }
+        xhr.open("GET", url, true);
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState == 4 && xhr.status == 200) {
+                cb(xhr.responseText);
+            }
+        };
+        xhr.send();
+    }
+
+	function addCallBack() {
+        egret.ExternalInterface.addCallback("callJS", function (data) {
+            console.log("call js: " + data)
+            var jsonData = JSON.parse(data);
+            if (jsonData.cmd == "gameLogin") {
+                pfLogin(jsonData.data);
+            }
+			else if(jsonData.cmd == "sdkinited"){
+				_isSdkInit = true;
+				if (_loginCb && _loginThis){
+					egret.ExternalInterface.call("pfCmd", '{"cmd":"gameLogin", "data":{}}');
+				}
+			}
+			else if(jsonData.cmd == "checkVersion"){
+				if (jsonData.data.hasNew == "0"){
+					startGame();
+				}
+			}
+			else if(jsonData.cmd == "init"){
+				onPfInit(jsonData);
+			}
+            else if (jsonData.cmd == "loginout") {
+                window.location.reload();
+            }
+            else if (jsonData.cmd == "share") {
+                if (!jsonData.ecode) {
+                    if (_shareCb) {
+                        _shareCb.call(_shareObj);
+                    }
+                }
+                _shareCb = null;
+                _shareObj = null;
+            }
+            else if(jsonData.cmd == "getCID"){
+                console.log("cid:" + jsonData.data.cid)
+                window.GAME_CID = jsonData.data.cid
+            }
+        });
+    }
+
+    function initPf() {
+        addCallBack();
+        console.log("initpf");
+        egret.ExternalInterface.call("pfCmd", '{"cmd":"initSdk", "data":{}}');
+    }
+	
+	function checkVersion(){
+		PfHttpRequest("https://wor-cdnsrc.r2games.com/version.php", null, function(data){
+			var d = {
+				cmd:"checkVersion",
+				data: JSON.parse(data)
+			};
+			
+			egret.ExternalInterface.call("pfCmd", JSON.stringify(d));
+		});
+	}
+
+	function pfCommand(cmd, data, cb, thisObj) {
+		console.log("cmd:" + cmd);
+        switch (cmd) {
+            case "gameLogin":
+				_loginCb = cb;
+				_loginThis = thisObj;
+				if (_isSdkInit){
+					egret.ExternalInterface.call("pfCmd", '{"cmd":"gameLogin", "data":{}}');
+				}
+                break;
+            case "gameInit":
+                window.roleId = data.roleId;
+                window.serverId = data.serverId;
+                egret.ExternalInterface.call("pfCmd", '{"cmd":"getCID", "data":{}}');
+                break;
+            case "gamePay":
+				pfPay(data);
+                break;
+            case "pfLoginOut":
+				gameLogout();
+                break;
+            case "pfReport":
+				pfReport(data);
+                break;
+            case "delAccount":
+                if (_isSdkInit){
+                    egret.ExternalInterface.call("pfCmd", '{"cmd":"delAccount", "data":{}}');
+                }
+                break;
+            case "showKefu":
+                if (_isSdkInit){
+                    egret.ExternalInterface.call("pfCmd", '{"cmd":"showhelp", "data":{}}');
+                }
+                break;
+            case "rename":
+                if (_isSdkInit){
+                    var d = {
+                        cmd: "rename",
+                        data:{
+                            name: data
+                        }
+                    }
+                    egret.ExternalInterface.call("pfCmd", JSON.stringify(d));
+                }
+                break
+            case "copy":
+                var d = {
+                    cmd: "copy",
+                    data:{
+                        str: data
+                    }
+                }
+                egret.ExternalInterface.call("pfCmd", JSON.stringify(d));
+                break;
+        }
+    }
+
+	function onPfInit(data){
+	}
+
+	function onGameInited() {
+		console.log("onGameInited");
+		//setTimeout(function(){
+			egret.ExternalInterface.call("pfCmd", '{"cmd":"onInited", "data":{}}');
+        //}, 100);
+	}
+
+	function pfLogin(data) {
+	    if (data.retcode == "-1"){
+	        _loginCb.call(_loginThis, false);
+	        return;
+	    }
+		var ldata = {
+			userid: data.userid,
+			token: data.token,
+			appid: data.appid
+		}
+
+		PfHttpRequest(_apiUrl + "login", ldata, function (retTxt) {
+			console.log("login ret " + retTxt);
+			var ret = JSON.parse(retTxt);
+            if (ret.ret != 0) {
+				_loginCb.call(_loginThis, false);
+			}
+			else{
+				var ld = {}
+				ld.userId = ldata.userid;
+				ld.sig = ret.sign;
+				ld.time = Number(ret.tm);
+				ld.platid = 20051;
+                ld.host = "wormb-s1.r2games.com/gate/zj1"
+				_loginCb.call(_loginThis, ld);
+			}
+
+			_loginCb = null;
+			_loginThis = null;
+		});
+	}
+
+	function pfReport(data) {
+		_reportData = data;
+		if (data.type == 1){
+			return;
+		}
+		if (data.type == 2){
+			data.ctime = new Date().getTime();
+		}
+
+		egret.ExternalInterface.call("pfCmd", '{"cmd":"report", "data":' + JSON.stringify(data) +'}');
+    }
+
+	function pfPay(data){
+		var yuan = data.money / 100;
+		var payData = {
+			cmd: "pay",
+			data:{
+				itemId: data.itemId,
+				ext: {roleid: _reportData.roleId},
+				price: yuan,
+				num: data.money / 10
+			}
+		}
+		egret.ExternalInterface.call("pfCmd", JSON.stringify(payData));
+	}
+
+	function gameLogout() {
+        //清除账号记录
+        egret.ExternalInterface.call("pfCmd", '{"cmd":"gameLogout", "data":{}}');
+    }
+
+	function getAudioType() {
+			var type = 0;
+		var sUserAgent = navigator.userAgent.toLowerCase();
+		if (sUserAgent.match(/abxcnop/i) == "abxcnop")
+			type = 3;
+		console.log("audio type : " + type);
+		return type;
+	}
+
+    function GetXmlRequest() {
+        var xmlhttp = null;
+        if (window.XMLHttpRequest) {
+            xmlhttp = new XMLHttpRequest();
+        }
+        else {
+            xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+        }
+        return xmlhttp;
+    }
+
+    var loadScript = function (list, callback) {
+        var loaded = 0;
+        var loadNext = function () {
+            loadSingleScript(list[loaded], function () {
+                loaded++;
+                if (loaded >= list.length) {
+                    callback();
+                }
+                else {
+                    loadNext();
+                }
+            })
+        };
+        loadNext();
+    };
+
+    var loadSingleScript = function (src, callback) {
+        var s = document.createElement('script');
+        s.async = false;
+        s.src = src;
+        s.addEventListener('load', function () {
+			console.log(src);
+            s.parentNode.removeChild(s);
+            s.removeEventListener('load', arguments.callee, false);
+            callback();
+        }, false);
+        document.body.appendChild(s);
+    };
+
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', './manifest.json', true);
+    xhr.addEventListener("load", function () {
+        var manifest = JSON.parse(xhr.response);
+        window.VF_VERSION = manifest.version;
+		window.RESCFG_V = manifest.resv;
+        var list = manifest.initial.concat(manifest.game);
+        loadScript(list, function () {
+            initPf();
+
+			checkVersion();
+        });
+    });
+    xhr.send(null);
+
+	function startGame(){
+	    window.DisableAvatarUrl = true;
+		egret.ImageLoader.crossOrigin = "anonymous";
+		var adtype = getAudioType();
+		egret.runEgret({
+			renderMode: "webgl", audioType: adtype, calculateCanvasScaleFactor: function (context) {
+				var backingStore = context.backingStorePixelRatio ||
+					context.webkitBackingStorePixelRatio ||
+					context.mozBackingStorePixelRatio ||
+					context.msBackingStorePixelRatio ||
+					context.oBackingStorePixelRatio ||
+					context.backingStorePixelRatio || 1;
+				return (window.devicePixelRatio || 1) / backingStore;
+			}
+		});
+	}
+</script>
+</body>
+
+</html>

@@ -1,0 +1,339 @@
+
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title></title>
+    <!-- <base href="//wor-cdn.r2games.com/en/" /> -->
+    <meta name="viewport" content="width=device-width,initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="full-screen" content="true" />
+    <meta name="screen-orientation" content="portrait" />
+    <meta name="x5-fullscreen" content="true" />
+    <meta name="360-fullscreen" content="true" />
+    <link rel="dns-prefetch" href="//wor-cdn.r2games.com" />
+	<style>
+        html, body {
+            -ms-touch-action: none;
+            background: #000000;
+            padding: 0;
+            border: 0;
+            margin: 0;
+            height: 100%;
+            overflow: hidden;
+        }
+    </style>
+    <link rel="stylesheet" href="main.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9-1/crypto-js.js"></script>
+</head>
+
+<body>
+     <div id="init_con" style="width:100%;height: 100%;text-align: center;position: absolute">
+        <img id="logo_img" src="resource/ui/loading/loading_bg.jpg" />
+    </div>
+    <div id="loading" style="width:100%;height: 100%;text-align: center;position: absolute; top: 50%">
+        <img id="loading_img" src="resource/ui/loading/loading.gif">
+    </div>
+    <div id="canvas_container" style="margin: auto;width: 100%;height: 100%;" class="egret-player" data-entry-class="Main" data-orientation="auto" data-scale-mode="showAll" data-frame-rate="30" data-content-width="720"
+data-content-height="1560" data-multi-fingered="1" data-show-fps="false" data-show-log="false" data-show-fps-style="x:0,y:0,size:12,textColor:0xffffff,bgAlpha:0.9">
+</div>
+
+<script type="text/javascript" src="https://wor-cdn.r2games.com/jquery.min.js"></script>
+<script type="text/javascript" src="https://r2cdn2.r2games.com/en/js/r2api/r2games.js?v=2"></script>
+
+<!--<script src="https://cdn.7tiao.net/vconsole.min.js"></script>
+<script>
+    var vConsole = new VConsole();
+</script>-->
+
+<script>
+	$(window).resize(function () {
+        resizeWidth();
+    })
+
+    //重新设置宽度
+    function resizeWidth() {
+        var bw = $('body').width();
+        var bh = $('body').height();
+        var whr = bw / bh;
+        console.log("bw " + bw + " bh " + bh + " whr " + whr);
+        if (whr < 0.595) { //p
+            $('#canvas_container').attr('data-scale-mode', 'fixedWidth');
+            $('#canvas_container').attr('data-show-fps', 'false');
+			$('#logo_img').attr('width', '100%');
+			if (typeof (GmGlobal) != 'undefined'){
+				GmGlobal.root.stage.scaleMode = egret.StageScaleMode.FIXED_WIDTH;
+			}
+        }
+		else{
+			$('#canvas_container').attr('data-scale-mode', 'fixedHeight');
+            var newHeight = Math.max(bh, 1280)
+            $('#canvas_container').attr('data-content-height', newHeight);
+            var nhScale = Math.floor((1560 / newHeight) * 100);
+            if (whr <= 1.0){
+                 $('#logo_img').attr('width', '100%');
+            }
+            else{
+                $('#logo_img').attr('height', nhScale + "%");
+            }
+			if (typeof (GmGlobal) != 'undefined'){
+				GmGlobal.root.stage.scaleMode = egret.StageScaleMode.FIXED_HEIGHT;
+			}
+		}
+    }
+    resizeWidth();
+	
+	var isGameReport = -1;
+    function gameReport(tid) {
+        if (isGameReport == -1) {
+            if(navigator.cookieEnabled && typeof window.localStorage !== 'undefined') {
+				var report = localStorage.getItem("isGameReport");
+				if (report == "1") {
+					isGameReport = 1;
+				}
+				else {
+					isGameReport = 0;
+				}
+            }
+			else{
+				isGameReport = 1;
+			}
+        }
+        if (isGameReport) {
+            return;
+        }
+        console.log("gamereport " + tid)
+        var data = {
+            gid: "xjen",
+            tid: tid
+        }
+        PfHttpRequest("https://wor-s1.r2games.com/comindex/log/loading", data, function(ret){
+            console.log(ret)
+        })
+		
+		if (tid == 17) {
+            localStorage.setItem("isGameReport", "1");
+        }
+    }
+
+    gameReport(1);
+	
+    function getarg(name) {
+        var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+        var r = window.location.search.substr(1).match(reg);
+        if (r != null) return decodeURIComponent(r[2]);
+        return 0;
+    }
+
+    var reportData = null;
+    
+    var loadScript = function (list, callback) {
+        var loaded = 0;
+        var loadNext = function () {
+            loadSingleScript(list[loaded], function () {
+                loaded++;
+                if (loaded >= list.length) {
+                    callback();
+                }
+                else {
+                    loadNext();
+                }
+            })
+        };
+        loadNext();
+    };
+
+    var loadSingleScript = function (src, callback) {
+        var s = document.createElement('script');
+        s.async = false;
+        s.src = src;
+        s.addEventListener('load', function () {
+            s.parentNode.removeChild(s);
+            s.removeEventListener('load', arguments.callee, false);
+            callback();
+        }, false);
+        document.body.appendChild(s);
+    };
+
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', './manifest.json?v=' + Math.random(), true);
+    xhr.addEventListener("load", function () {
+        var manifest = JSON.parse(xhr.response);
+        window.VF_VERSION = manifest.version;
+		window.RESCFG_V = manifest.resv;
+        var list = manifest.initial.concat(manifest.game);
+        loadScript(list, function () {   
+            window.SHARE_MODULE = false; 
+            window.HTTP = "https:";
+            window.CFG_FILE = "cfg.zz";
+			window.IOS_CFG_FILE = "cfg.zz";
+			window.LOGFILE = 'log_en.json';
+			window.IOS_LOGFILE = "log_en.json";
+			window.SERVER_TYPE = 2;
+			
+			gameReport(2);
+
+			window.DisableAvatarUrl = true;
+			egret.ImageLoader.crossOrigin = "anonymous";
+			var adtype = getAudioType();
+            egret.runEgret({
+                renderMode: "webgl", audioType: adtype, calculateCanvasScaleFactor: function (context) {
+                    var backingStore = context.backingStorePixelRatio ||
+                        context.webkitBackingStorePixelRatio ||
+                        context.mozBackingStorePixelRatio ||
+                        context.msBackingStorePixelRatio ||
+                        context.oBackingStorePixelRatio ||
+                        context.backingStorePixelRatio || 1;
+                    return (window.devicePixelRatio || 1) / backingStore;
+                }
+            });
+        });
+    });
+    xhr.send(null);
+	
+	//获取音频播放类型，默认为0
+	function getAudioType() {
+		var type = 0;
+		var sUserAgent = navigator.userAgent.toLowerCase();
+		if (sUserAgent.match(/abxcnop/i) == "abxcnop")
+			type = 3;
+		console.log("audio type : " + type);
+		return type;
+	}
+	
+	//游戏内部初始化完成后调用该方法，关闭初始化界面
+    function onGameInited() {
+        var logo = document.getElementById("init_con");
+        logo.style.display = "none";
+        var loading = document.getElementById("loading");
+        loading.style.display = "none";
+    }
+
+    function PfHttpRequest(url, data, cb){
+        var xhr = new XMLHttpRequest();
+		url += "?t=" + new Date().getTime();
+        for(var key in data){
+            url += "&" + key + "=" + data[key]
+        }
+        xhr.open("GET", url, true);
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState == 4 && xhr.status == 200) {
+                cb(xhr.responseText);
+            }
+        };
+        xhr.send();
+    }
+
+    function pfCommand(cmd, data, cb, thisObj) {
+		console.log("pfCommand:" + cmd);
+        switch (cmd) {
+            case "gameLogin":
+                pfLogin(data, cb, thisObj)
+                break;
+            case "gameInit":
+                window.serverId = data.serverId;
+                window.roleId = data.roleId;
+                break;
+            case "gamePay":
+                pfPay(data);
+                break;
+            case "gameShare":
+                break;
+            case "pfReport":
+                pfReport(data);
+                break;
+			case "pfRestart":
+                window.location.reload()
+                break;
+        }
+    }
+
+    var success = -1;
+    function pfLogin(data, cb, thisObj){
+		console.log("pfLogin");
+		
+
+        var token = '';
+
+        var _token = localStorage.getItem('wor_token');
+
+        if (_token !== null) {
+            token = _token;
+        }
+
+        var ttoken = prompt('Enter Token', token);
+
+       try {
+
+        var loginData = JSON.parse(CryptoJS.AES.decrypt(ttoken, 'p@nadayag3').toString(CryptoJS.enc.Utf8));
+
+        localStorage.setItem('wor_token', ttoken);
+        window.worttoken = ttoken;
+
+        window.openid = loginData.userid;
+        PfHttpRequest("https://wormb-s1.r2games.com/api/wing/login/", loginData, function(retTxt){
+            var ret = JSON.parse(retTxt);
+            if (ret.ret != 0){
+                alert("login fail：" + ret.msg);
+                cb.call(thisObj, false);
+            } else{
+                
+                var lData = {}
+                lData.userId = loginData.userid;
+                lData.sig = ret.sign;
+                lData.time = Number(ret.tm);
+                lData.platid = 20051;
+                lData.host = "wormb-s1.r2games.com/gate/zj1"
+
+                cb.call(thisObj, lData);
+
+            }
+        });
+       } catch (e) {
+        alert('Invalid token!');
+        // window.location.reload();
+       }
+    }
+
+    function pfPay(data, cb, thisObj){
+		R2Games.callPay(window.openid, window.roleId, "WOR_" + (data.money / 100).toFixed(2), window.roleId + "_" + data.itemId);
+    }
+	
+	var isNew = 0;
+    function pfReport(data) {
+        if (data.type == 1){
+            return;
+        }
+
+        if (!reportData){
+            reportData = {};
+            reportData.uid = window.openid;
+            reportData.serverId = data.serverId;
+            reportData.userRoleName = data.name;
+            reportData.userRoleId = data.roleId;
+			reportData.serverName = "S" + data.serverId
+        }
+        reportData.isCreateRole = data.type == 2 ? true : false;
+        reportData.roleCreateTime = new Date().getTime();
+		reportData.userRoleBalance = '0';
+        reportData.vipLevel = '0';
+        reportData.userRoleLevel = data.level;
+        reportData.partyId = '1';
+        reportData.partyName = '';
+		reportData.gameRolePower = data.zhanli;
+		
+		if (data.type == 3 || data.type == 4){
+			R2Games.eventLevelUp(getarg("uid"), data.roleId, data.level);
+		}
+    }
+
+
+	function restartGame() {
+        window.location.reload()
+    }
+</script>
+<script src="wortool.js"></script>
+</body>
+
+</html>

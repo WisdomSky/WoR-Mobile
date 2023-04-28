@@ -1,0 +1,37 @@
+[
+	{
+		"v":1,
+		"vtxt":1.01,
+		"txt":"Welcome to World of Rune！"
+	},
+	{
+		"v":2,
+		"vtxt":1.02,
+		"txt":"1. Adjustments in Pet system.\n2. Increased the amount of EXP and Skill Book from Pet Recycle.\n3. Added Pet Synthesis feature.\n4. Added Pet Soul Plate feature.\n5. New feature: Pet Festival\n6. Added new packs to Shop.\n7. Dojo: max occupation time is extended to 6 hours; the challenge reset attempts are reduced to 5.\n8. Optimized the Guild Boss and the Rift Boss features.\n9. Normal Extraction: added a confirmation prompt for saving and a display of elemental stats. \n10. Added a quantity selection when using Pet EXP items.\n11. Added a kick function to the team system.\n12. Range of Boss Card - War Machine is increased by 60%.\n13. Fixed the issue where it only counts 1 item when players obtain more than 2 Head items for the first time.\n14. Added a team-up invitation function between friends. \n15. Fixed minor bugs.\n16.Adjusted the drops in MVP."
+	},
+	{
+		"v":3,
+		"vtxt":1.03,
+		"txt":"1. Fixed some bugs in Whose Cat.\n2. Added a slide bar in Shop.\n3. Quick purchase is available in Guild Order now.\n4. The Celebration system is online.\n5. Added filter function in Trade.\n6. Optimized and fixed some bugs."
+	},
+	{
+		"v":4,
+		"vtxt":1.04,
+		"txt":"1. Optimized the interactive animation of the refinement system.\n2. Added a notice for the cards that can not be modified at the moment.\n3. Added a cooldown for dungeon invitation sent by friends.\n4. Added a refinement lock function: players can lock the stats to keep them unchanged in a refinement.\n5. Added new rewards in Daily Pack.\n6. Added a Diamond Pet Recycling function, all the upgrade materials will be returned.\n7. Adjusted the rewards of 7D Reward.\n8. Changed the price of LT Gift.\n9. Added a hide-chat function."
+	},
+	{
+		"v":5,
+		"vtxt":1.05,
+		"txt":"1. Adjusted MVP revival time.\n2. Adjusted wild accessible level. Unlocked premium MVP and related rewards.\n3. Adjusted price and effects for HP and MP potions.\n4. Added Slot and Hit the Bun listing requirement. Slot ranking settlement time shows now.\nAdded monster’s Element, Race and Shape to Pet and Index system.\n6. Added Weekly Pass and Monthly Pass to P. VIP.\n7. Adjusted Abyss Tower rewards. Increased the chance of getting Moonstone materials and the floor limit.\n8. Added Weekly Quest. Complete to get New 'Weekly Quest', you can get Moonstone materials. \n9. The monsters speed in the Statue Defense increases according to the floors. Increased the floor limit.\n10. Added “On/Off” button for auto combat, which unlocks after completing the Novice Quests.\n11. Added irregularly open Power Ranking.\n12. Added Bank in Offer.\n13. Added Aura Transformation.\n14. Optimized Alchemy progress in Alchemy Match.\n15. Added convert function for Shadow Gear. According to the refinement level, spends Diamonds to convert.\n16. Added wild protective items.\n17. Adjusted consumption pages in Shop."
+	},
+	{
+		"v":6,
+		"vtxt":1.06,
+		"txt":"1. New feature: Altverse.\n2. New character system: Altem.\n3. Limited time cross-server invitation available in Mech Factory and Mystery Den. Check the rules for more details.\n4. New Auras.\n5. Optimized the auto Circle Quest function.\n6. MVP prompt effect disabled in dungeon.\n7. Added requirement description to Fortune Card.\n8. Mech Factory - extended the bot’s search range in auto battle mode.\n9. Consecutive recharge extension available.\n10. Added quick purchase for Head crafting materials (2x price).\n11. Added Diamond reward to Weekly Quest, adjusted the required times for some of the quests.\n12. Amount selection available when using the EXP item.\n13. Added Card Fusion.\n14. Adjusted the items of the Cute Pet wheel.\n15. Fixed minor bugs.\n16. 3x EXP Potion available in Shop.\n17. Shortened the respwan interval of the wild monsters.\n18. Added Holy War Set."
+	},
+	{
+		"v":7,
+		"vtxt":1.07,
+		"txt":"1. New Mode: Pyramid Treasure\n2. Cross-server invitations in Statue Defense and Altverse are available every week. Check the rules for more details.\n3. Raised the level limit of Relics.\n4. Lowered the level requirement of the Horoscope system; unlocked new Horoscopes; raised the level limit of Star Stone of all Horoscopes.\n5. Raised the level limit of Shadow Gear.\n6. Added a “Pin” function to the Friend system.\n7. Fixed minor bugs."
+	}
+]

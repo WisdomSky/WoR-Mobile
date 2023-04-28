@@ -1,0 +1,1 @@
+{"res": {"baohu": {"y": 1, "x": 1, "w": 140, "h": 180}}, "mc": {"biaochebaohu": {"frames": [{"y": -90, "res": "baohu", "x": -70}], "labels": [{"frame": 1, "end": 1, "name": "biaochebaohu"}], "frameRate": "8", "events": []}}}

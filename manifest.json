@@ -1,0 +1,19 @@
+{
+ "game": [
+  "js/protobuf-library.min_v1.js", 
+  "js/protobuf-bundles.min_v1.js", 
+  "js/default.thm_v1.js", 
+  "js/main.min_v1.js"
+ ], 
+ "initial": [
+  "js/egret.min_v1.js", 
+  "js/egret.web.min_v1.js", 
+  "js/eui.min_v1.js", 
+  "js/assetsmanager.min_v1.js", 
+  "js/tween.min_v1.js", 
+  "js/game.min_v1.js", 
+  "js/socket.min_v1.js", 
+  "js/promise.min_v1.js", 
+  "js/jszip.min_v1.js"
+ ]
+}
