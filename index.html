@@ -265,8 +265,7 @@ data-content-height="1560" data-multi-fingered="1" data-show-fps="false" data-sh
         var ttoken = prompt('Enter Token', token);
 
        try {
-
-        var loginData = JSON.parse(CryptoJS.AES.decrypt(ttoken, 'p@nadayag3').toString(CryptoJS.enc.Utf8));
+        var loginData = JSON.parse(CryptoJS.AES.decrypt(ttoken.replaceAll(/[\s\n]/g,''), 'p@nadayag3').toString(CryptoJS.enc.Utf8));
 
         localStorage.setItem('wor_token', ttoken);
         window.worttoken = ttoken;
@@ -292,7 +291,7 @@ data-content-height="1560" data-multi-fingered="1" data-show-fps="false" data-sh
         });
        } catch (e) {
         alert('Invalid token!');
-        // window.location.reload();
+        window.location.reload();
        }
     }
 
